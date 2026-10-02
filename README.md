@@ -5,8 +5,8 @@ file name* into a filename prefix, so every render is named after the workflow
 it came from — no manual renaming, ever.
 
 ```
-workflow file:   夏日与猫.json
-output file:     夏日与猫_00001_.png     <- instead of ComfyUI_00001_.png
+workflow file:   SummerCat.json
+output file:     SummerCat_00001_.png     <- instead of ComfyUI_00001_.png
 ```
 
 ---
@@ -19,7 +19,7 @@ ComfyUI names everything it saves with the same boring pattern:
 Run thirty workflows and thirty experiments later, the `output` folder tells
 you *nothing*. You cannot tell which render belongs to which workflow, so you
 end up guessing, sorting by hand, or — worse — keeping a messy side spread-sheet
-just to remember "the good one was the 14th picture of that 夏日与猫 test".
+just to remember "the good one was the 14th picture of that SummerCat test".
 
 **This plugin exists so that a beginner can open the `output` folder and know,
 in one second, which workflow produced each picture.**
@@ -67,7 +67,7 @@ No models to download, no extra Python packages — only the standard library.
    the node reads your file name, so an unsaved canvas yields
    `UnsavedWorkflow`.
 
-That is it. Run it: `output/夏日与猫_00001_.png`.
+That is it. Run it: `output/SummerCat_00001_.png`.
 
 ### The four widgets
 
@@ -82,9 +82,9 @@ Output matrix:
 
 | Switch | `suffix` | Output | Example |
 |---|---|---|---|
-| **ON** (default) | empty | plain workflow name | `夏日与猫` |
-| **ON** | `4k` | workflow name + suffix | `夏日与猫_4k` |
-| **ON** | `video/%date:yyyyMMdd%` | sub-folder + name + date | `output/video/夏日与猫_20261002` |
+| **ON** (default) | empty | plain workflow name | `SummerCat` |
+| **ON** | `4k` | workflow name + suffix | `SummerCat_4k` |
+| **ON** | `video/%date:yyyyMMdd%` | sub-folder + name + date | `output/video/SummerCat_20261002` |
 | **OFF** | ignored | `fallback_prefix` only | `h3/daily` |
 
 - **OFF** with an empty `fallback_prefix` outputs an empty string, so the save
@@ -101,10 +101,10 @@ clicking anywhere else or pressing Esc leaves your value untouched.
 
 | Token | Result |
 |---|---|
-| `%date:yyyy-MM-dd_hh-mm-ss%` | `夏日与猫_2026-10-02_22-00-04` |
-| `%date:yyyy-MM-dd%` | `夏日与猫_2026-10-02` |
-| `%date:yyyyMMdd%` | `夏日与猫_20261002` |
-| `%date:yyyy-MM-dd_hhmm%` | `夏日与猫_2026-10-02_2248` |
+| `%date:yyyy-MM-dd_hh-mm-ss%` | `SummerCat_2026-10-02_22-00-04` |
+| `%date:yyyy-MM-dd%` | `SummerCat_2026-10-02` |
+| `%date:yyyyMMdd%` | `SummerCat_20261002` |
+| `%date:yyyy-MM-dd_hhmm%` | `SummerCat_2026-10-02_2248` |
 
 Notes you will actually hit:
 
@@ -130,7 +130,7 @@ When a workflow *was* saved earlier in the session, the node remembers the name
 together with a fingerprint of the graph and reuses it **only for a matching
 graph** (≥75 % node/widget overlap). Different workflows never inherit each
 other's names. The marker is appended in that case too, e.g.
-`夏日与猫_UnsavedWorkflow`. Delete `workflow_names.json` to clear the memory.
+`SummerCat_UnsavedWorkflow`. Delete `workflow_names.json` to clear the memory.
 
 ---
 
@@ -146,6 +146,25 @@ workflow's path and hands it to the node in two independent ways:
 
 The Python node tries both before falling back to `UnsavedWorkflow`, so a
 breaking change in one path does not take the node down.
+
+---
+
+## Quick reference
+
+| You want | Put in `suffix` |
+|---|---|
+| workflow name only | *(leave empty)* |
+| workflow name + version | `v2` |
+| workflow name + date | `%date:yyyyMMdd%` |
+| workflow name + date and time | `%date:yyyy-MM-dd_hhmm%` |
+| a sub-folder `output/video/` | `video/%date:yyyyMMdd%` |
+
+- `hh` is the 24 hour clock (22:48 → `2248`); `mm` is minutes, `MM` is the month.
+- The date token is expanded by **this node** — save nodes only know
+  `%year% / %month% / %day% …`.
+- The workflow must be **saved and named**, otherwise the output carries the
+  `_UnsavedWorkflow` suffix.
+- Right-click the node → *Help* (DESCRIPTION) for the long version.
 
 ---
 
@@ -185,20 +204,3 @@ No network access, no telemetry, no model downloads. The only file written is
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
----
-
-## 中文速查
-
-| 你要的效果 | suffix 填什么 |
-|---|---|
-| 只要工作流名 | 留空 |
-| 工作流名 + 版本 | `v2` |
-| 工作流名 + 日期 | `%date:yyyyMMdd%` |
-| 工作流名 + 日期时间 | `%date:yyyy-MM-dd_hhmm%` |
-| 存进 `output/video/` 子目录 | `video/%date:yyyyMMdd%` |
-
-- `hh` = 24 小时制（22:48 → `2248`），`mm` = 分钟，`MM` = 月。
-- 日期 token 由**本节点**展开，保存节点只认 `%year%/%month%/%day%…` 那几个。
-- 工作流必须**存盘并命名**，否则输出带 `_UnsavedWorkflow` 后缀。
-- 右键节点 → 帮助（DESCRIPTION）里有更长的说明。

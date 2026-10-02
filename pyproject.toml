@@ -7,7 +7,7 @@ name = "workflow2filename"
 
 # Semantic versioning. Bump this before every `comfy node publish`,
 # otherwise the registry rejects the upload ("version already exists").
-version = "1.0.1"
+version = "1.0.3"
 
 description = "Automatically turns the current workflow's file name into a filename prefix, ready to wire into any save node's filename_prefix."
 
