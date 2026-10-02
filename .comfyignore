@@ -1,0 +1,25 @@
+# Files kept out of the published archive (syntax = .gitignore).
+# `comfy node publish` packs everything tracked by git; this file drops the
+# rest on top of that.
+
+# Generated at runtime - never ship (it also contains private workflow names).
+workflow_names.json
+
+# Build artifact written by `comfy node publish` (it lands in the repo root
+# and gets git-added). Ship source only.
+node.zip
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Repo / editor / OS noise
+.git/
+.github/
+.gitignore
+.vscode/
+.idea/
+*.log
+Thumbs.db
+.DS_Store

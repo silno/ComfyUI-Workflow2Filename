@@ -1,0 +1,50 @@
+[project]
+# Node id on the registry. Rules: <100 chars, only letters/digits/hyphens/
+# underscores/dots, must not start with a digit or symbol, no consecutive
+# special chars. Best practice: do NOT include the word "ComfyUI".
+# IMPORTANT: this id is IMMUTABLE once published - pick it carefully.
+name = "workflow2filename"
+
+# Semantic versioning. Bump this before every `comfy node publish`,
+# otherwise the registry rejects the upload ("version already exists").
+version = "1.0.1"
+
+description = "Automatically turns the current workflow's file name into a filename prefix, ready to wire into any save node's filename_prefix."
+
+# Either a file reference or { text = "<license name>" }. Keep the LICENSE
+# file in the repo root.
+license = { file = "LICENSE" }
+
+requires-python = ">=3.8"
+
+# Zero third-party dependencies - only hashlib/json/os/re/time from stdlib.
+# NOTE: the JS extension relies on frontend storage keys of newer ComfyUI
+# frontends (tested on comfyui_frontend_package 1.53.6). No hard pin is
+# declared on purpose: if a future frontend changes those keys the node
+# degrades gracefully (falls back to "UnsavedWorkflow") instead of breaking.
+dependencies = []
+
+classifiers = [
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+# If you name the GitHub repo something else, update these three URLs too.
+Repository = "https://github.com/silno/ComfyUI-Workflow2Filename"
+Documentation = "https://github.com/silno/ComfyUI-Workflow2Filename#readme"
+"Bug Tracker" = "https://github.com/silno/ComfyUI-Workflow2Filename/issues"
+
+[tool.comfy]
+# Matches the GitHub account above, which is the recommended convention.
+# Globally unique and CANNOT be changed later.
+PublisherId = "silno"
+
+# Human friendly name shown on the registry / in ComfyUI-Manager.
+DisplayName = "Workflow2Filename"
+
+# Optional. Square, SVG/PNG/JPG/GIF, max 400x400.
+# Icon = "https://raw.githubusercontent.com/silno/ComfyUI-Workflow2Filename/main/icon.png"
+
+# Optional. ComfyUI compatibility range (operators <, >, <=, >=, ~=, !=, <>).
+# Developed against ComfyUI core 0.38.1.
+requires-comfyui = ">=0.3.40"

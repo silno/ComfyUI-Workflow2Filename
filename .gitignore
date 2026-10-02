@@ -1,0 +1,20 @@
+# Runtime-generated: workflow_names.json stores the LOCAL workflow names and
+# graph fingerprints of whoever ran the node. Never commit it - apart from
+# being per-machine state it leaks private file names.
+workflow_names.json
+
+# `comfy node publish` writes node.zip into the repo root. It is a build
+# artifact - never commit it (it would be packed into the next release too).
+node.zip
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# OS / editor noise
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+*.log
