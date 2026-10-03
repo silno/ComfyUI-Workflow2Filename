@@ -839,7 +839,7 @@ function openDateMenu(node, name, rect) {
         "user-select:none;cursor:default;";
 
     const head = document.createElement("div");
-    head.textContent = "插入日期格式 / Insert date token";
+    head.textContent = "Insert date token";
     head.style.cssText =
         "padding:2px 8px 6px;font-size:11px;color:#888780;border-bottom:" +
         "1px solid rgba(0,0,0,.08);margin-bottom:4px;";
@@ -881,7 +881,7 @@ function openDateMenu(node, name, rect) {
     }
 
     const hint = document.createElement("div");
-    hint.textContent = "点击别处或按 Esc 取消";
+    hint.textContent = "click elsewhere or press Esc to dismiss";
     hint.style.cssText =
         "padding:6px 8px 2px;font-size:11px;color:#888780;border-top:" +
         "1px solid rgba(0,0,0,.08);margin-top:4px;";
@@ -907,12 +907,12 @@ function openDateMenu(node, name, rect) {
     __dateMenu = menu;
 }
 
-// --- the native "值" (value) edit dialog -------------------------------------
+// --- the native "value" edit dialog ------------------------------------------
 // Double-clicking a string widget opens ComfyUI's own edit dialog. We attach
 // our date menu to THAT dialog (above its input) and select all of the input
 // content, so the user either types a fresh string or clicks a date format.
 // Picking a format REPLACES the selected content; the dialog's own OK button
-// ("确定") commits it - cancelling always leaves the widget untouched.
+// ("OK") commits it - cancelling always leaves the widget untouched.
 // Same list as DATE_FIELDS, kept separate because the two paths behave a bit
 // differently (widget-anchored fallback vs. native dialog bridge).
 // `filename` is filled in by us on Queue, so it is excluded on purpose:
@@ -929,7 +929,7 @@ const __HIT_TTL = 3000; // ms; how long the memory stays valid for a NEW field
 const __HIT_TTL_DIALOG = 60000; // ... but it stays usable while that field's
 //                                  own edit dialog is still open on screen
 
-// IMPORTANT: several frontend builds render the "值" dialog in very different
+// IMPORTANT: several frontend builds render the "value" dialog in very different
 // ways - a native <dialog>, a reka-ui modal, an absolutely positioned panel
 // inside the node. Missing one of them made every attempt to double-click
 // inside the dialog fail, so this list is deliberately broad.
@@ -1093,7 +1093,7 @@ function showDialogDateMenu(inp) {
         "user-select:none;cursor:default;";
 
     const head = document.createElement("div");
-    head.textContent = "插入日期格式 / Insert date token";
+    head.textContent = "Insert date token";
     head.style.cssText =
         "padding:2px 8px 6px;font-size:11px;color:#888780;border-bottom:" +
         "1px solid rgba(0,0,0,.08);margin-bottom:4px;";
@@ -1145,7 +1145,7 @@ function showDialogDateMenu(inp) {
 
     const hint = document.createElement("div");
     hint.textContent =
-        "点击格式会替换全部内容，Esc 取消 / click replaces all, confirm with OK";
+        "picking a format replaces the whole field, Esc cancels";
     hint.style.cssText =
         "padding:6px 8px 2px;font-size:11px;color:#888780;border-top:" +
         "1px solid rgba(0,0,0,.08);margin-top:4px;";
@@ -1174,7 +1174,7 @@ function showDialogDateMenu(inp) {
 function attachDialogMenu(inp) {
     try {
         inp.focus();
-        inp.select(); // "全选输入框的内容" - typing replaces it all
+        inp.select(); // selects it all, so typing replaces it
     } catch (e) {
         /* ignore */
     }
@@ -1244,7 +1244,7 @@ function installDateMenu() {
                 attachDialogMenu(inp);
                 return;
             }
-            // (a3) anywhere else inside that dialog (the "值" label, padding,
+            // (a3) anywhere else inside that dialog (the "value" label, padding,
             // the panel around the input): adopt its input as well.
             if (t && !isOurWidgetRow(t) && findDialogInput() && recentHit()) {
                 if (ev.preventDefault) ev.preventDefault();
@@ -1440,7 +1440,7 @@ app.registerExtension({
                 return "bubble shown for: " + key;
             };
             // Diagnostics for the date menu. After a double click inside the
-            // "值" dialog, run __wfDateTest() in the console: it prints what the
+            // "value" dialog, run __wfDateTest() in the console: it prints what the
             // extension thinks the dialog belongs to, whether it recognised the
             // dialog at all and whether it latched an input.
             window.__wfDateTest = () => {
