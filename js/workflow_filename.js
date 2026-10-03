@@ -755,17 +755,54 @@ function installCanvasTips() {
 // CLICK on a text widget pops a small menu with the supported formats. Picking
 // one writes the token into the widget; clicking anywhere else - or pressing
 // Esc - just dismisses the menu and leaves the value untouched.
+// The sample shown on the right used to be a frozen string, so every render of
+// the menu advertised the same day - it looked stale, and worse, it read like
+// the token always produced that one value. Build the sample on demand instead:
+// the right column is now the moment you opened the menu.
+// Lower-case `hh` is the canonical spelling (Java/Unity style). The Python
+// side maps BOTH `hh` and `HH` to strftime %H, i.e. always the 24 hour
+// clock - so every sample below is a real 24h render, never a 12h one.
+// (Earlier builds paired a capital `HH` token with a 12 hour sample
+// ("..._1015" for 22:48), which read like a bug in the menu itself.)
 const DATE_TOKENS = [
-    { token: "%date:yyyy-MM-dd_hh-mm-ss%", sample: "2026-10-02_220004" },
-    { token: "%date:yyyy-MM-dd%", sample: "2026-10-02" },
-    { token: "%date:yyyyMMdd%", sample: "20261002" },
-    // Lower-case `hh` is the canonical spelling (Java/Unity style). The Python
-    // side maps BOTH `hh` and `HH` to strftime %H, i.e. always the 24 hour
-    // clock - so the sample below is a real 24h render, not a 12h one.
-    // The old entry paired a capital `HH` token with a 12 hour sample
-    // ("..._1015" for 22:48), which read like a bug in the menu itself.
-    { token: "%date:yyyy-MM-dd_hhmm%", sample: "2026-10-02_2248" },
+    { token: "%date:yyyy-MM-dd_hh-mm-ss%", sampleOf: dateAndTime },
+    { token: "%date:yyyy-MM-dd%", sampleOf: dateOnly },
+    { token: "%date:yyyyMMdd%", sampleOf: dateCompact },
+    { token: "%date:yyyy-MM-dd_hhmm%", sampleOf: dateAndShortTime },
 ];
+
+// Each helper renders the same shape the Python side writes, from a Date.
+function pad2(n) {
+    return String(n).padStart(2, "0");
+}
+
+function dateAndTime(now) {
+    return (
+        now.getFullYear() +
+        "-" +
+        pad2(now.getMonth() + 1) +
+        "-" +
+        pad2(now.getDate()) +
+        "_" +
+        pad2(now.getHours()) +
+        pad2(now.getMinutes()) +
+        pad2(now.getSeconds())
+    );
+}
+
+function dateOnly(now) {
+    return (
+        now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate())
+    );
+}
+
+function dateCompact(now) {
+    return now.getFullYear() + pad2(now.getMonth() + 1) + pad2(now.getDate());
+}
+
+function dateAndShortTime(now) {
+    return dateOnly(now) + "_" + pad2(now.getHours()) + pad2(now.getMinutes());
+}
 
 // `filename` is filled in by us on Queue, so it is deliberately excluded.
 const DATE_FIELDS = ["suffix", "fallback_prefix"];
@@ -856,7 +893,8 @@ function openDateMenu(node, name, rect) {
         tk.style.cssText = "font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;";
 
         const sm = document.createElement("span");
-        sm.textContent = item.sample;
+        const now = new Date();
+        sm.textContent = item.sampleOf(now);
         sm.style.cssText = "font-size:11px;color:#888780;";
 
         row.appendChild(tk);
@@ -1110,7 +1148,8 @@ function showDialogDateMenu(inp) {
         tk.style.cssText = "font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;";
 
         const sm = document.createElement("span");
-        sm.textContent = item.sample;
+        const now = new Date();
+        sm.textContent = item.sampleOf(now);
         sm.style.cssText = "font-size:11px;color:#888780;";
 
         row.appendChild(tk);
