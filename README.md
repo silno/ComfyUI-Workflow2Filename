@@ -87,6 +87,59 @@ Output matrix:
 | **ON** | `video/%date:yyyyMMdd%` | sub-folder + name + date | `output/video/SummerCat_20261002` |
 | **OFF** | ignored | `fallback_prefix` only | `h3/daily` |
 
+### Save into a sub-folder
+
+`filename_prefix` is not only a name — ComfyUI's save nodes also read the
+*path* part of it. So if a `suffix` (or a `fallback_prefix`) **starts** with a
+folder chain, that becomes a real sub-directory, created on the first render.
+
+Type this in `suffix`:
+
+```
+new/%date:yyyy-MM-dd_hhmm%
+```
+
+and a render of the `SummerCat` workflow lands here:
+
+```
+ComfyUI/output/new/SummerCat_2026-10-03_1009_00001_.png
+   └──┬──┘  └──┬──┘  └───────────────┬───────────────┘ └──┬─┘
+   base root   this node             workflow name      core
+   (SaveImage) created `new/`        + expanded date    _00001_
+```
+
+| `suffix` you type | File lands in | Full result |
+|---|---|---|
+| *(empty)* | `output/` | `output/SummerCat_00001_.png` |
+| `new/%date:yyyy-MM-dd_hhmm%` | `output/new/` | `output/new/SummerCat_2026-10-03_1009_00001_.png` |
+| `video/%date:yyyyMMdd%` | `output/video/` | `output/video/SummerCat_20261002_00001_.png` |
+| `archive/2026-10-03` | `output/archive/` | `output/archive/SummerCat_2026-10-03_00001_.png` |
+
+| `fallback_prefix` (switch OFF) | File lands in | Full result |
+|---|---|---|
+| `h3/daily` | `output/h3/` | `output/h3/daily_00001_.png` |
+| `prefix/ZIMAGE/QAZ` | `output/prefix/ZIMAGE/` | `output/prefix/ZIMAGE/QAZ_00001_.png` |
+
+Rules worth knowing:
+
+- The folder chain has to sit at the very **start** of the field. The node moves
+  it *in front of* the workflow name when the switch is ON, so you get
+  `new/<name>_…` — never `<name>_new/…`.
+- Multiple levels work in both fields. With the switch **ON**, the trailing
+  segment joins the file name (`archive/2026-10-03` → folder `archive/`, file
+  `<workflow>_2026-10-03`); with the switch **OFF** the whole string is the
+  prefix, so `prefix/ZIMAGE/QAZ` gives folder `prefix/ZIMAGE/` and file
+  `QAZ_00001_.png`, exactly as typed.
+- `/` and `\` both work, and the folders are created for you on the first
+  render. No `mkdir`, no manual tidy-up afterwards.
+- A trailing slash is fine too: `new/` → folder `new/`, file `<workflow>`.
+- **The root depends on the save node**: `Save Image` writes under `output/`,
+  `VHS_VideoCombine` under `output/video/`. Your folder is always *inside*
+  that root, so avoid names the node already uses (`video`, `image`,
+  `custom`).
+- Keep the whole chain short — the total path has to stay under Windows'
+  MAX_PATH (~260 characters).
+
 - **OFF** with an empty `fallback_prefix` outputs an empty string, so the save
   node keeps ComfyUI's own default naming (`ComfyUI_00001_`).
 - Widgets that do not apply to the current mode are greyed out.
@@ -120,7 +173,8 @@ Notes you will actually hit:
   this node the raw token ended up literally in the file name.
 - A leading `/` or `\` in `suffix` / `fallback_prefix` becomes a sub-folder and
   is moved *in front* of the workflow name, so the folder is never glued to the
-  end (`video/ComfyUI_%date:yyyyMMdd%` → `output/video/<name>_20261002`).
+  end. See [Save into a sub-folder](#save-into-a-sub-folder) for the exact
+  syntax and the file's final location.
 
 ---
 
@@ -160,9 +214,13 @@ breaking change in one path does not take the node down.
 | workflow name + version | `v2` |
 | workflow name + date | `%date:yyyyMMdd%` |
 | workflow name + date and time | `%date:yyyy-MM-dd_hhmm%` |
+| a sub-folder `output/new/` | `new/%date:yyyy-MM-dd_hhmm%` |
 | a sub-folder `output/video/` | `video/%date:yyyyMMdd%` |
 
 - `hh` is the 24 hour clock (22:48 → `2248`); `mm` is minutes, `MM` is the month.
+- **A folder goes at the start of the field** (`new/%date:…%`), never after the
+  token. The root (`output/` vs `output/video/`) comes from the save node, not
+  from this plugin.
 - The date token is expanded by **this node** — save nodes only know
   `%year% / %month% / %day% …`.
 - The workflow must be **saved and named**, otherwise the output carries the
@@ -174,12 +232,19 @@ breaking change in one path does not take the node down.
 ## Version history
 
 - **1.0.0** — first public release.
-- **1.0.1** — date formats: the menu's date token now uses the lower-case
-  `hh` spelling with a matching 24-hour sample (`%date:yyyy-MM-dd_hhmm%` →
+- **1.0.1** — date formats: the menu's date token now uses the lower-case `hh`
+  spelling with a matching 24-hour sample (`%date:yyyy-MM-dd_hhmm%` →
   `2026-10-02_2248`); the menu no longer advertises a `HH` token whose sample
-  looked 12-hour. The token is also expanded for a mistyped `yyyyy`.
-  Sub-folders, colon-bearing `%date:…%` tokens and per-workflow memory all
-  behave as in 1.0.0.
+  looked 12-hour. A mistyped `yyyyy` is expanded as well. Sub-folders,
+  colon-bearing `%date:…%` tokens and per-workflow memory behave as in 1.0.0.
+- **1.0.2 / 1.0.3** — the English-only cleanup: README rewritten in English
+  (`夏日与猫` → `SummerCat`), then the front end followed.
+- **1.0.4** — the front end is all English: the date menu, its title and its
+  Esc hints. The menu's sample column is now built from the live system clock
+  instead of a frozen string baked into the plugin.
+- **1.0.5** — README: sub-folder saving is documented properly — multi-level
+  chains work in both `suffix` and `fallback_prefix`, plus the exact output
+  path each one produces. No code change.
 
 ---
 
