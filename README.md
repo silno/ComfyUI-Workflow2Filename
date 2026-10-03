@@ -108,6 +108,9 @@ clicking anywhere else or pressing Esc leaves your value untouched.
 
 Notes you will actually hit:
 
+- The sample column in the menu is **live**: it is built from your system clock
+  at the moment the menu opens, so it shows a time you can really get instead
+  of a frozen string baked into the plugin.
 - `hh` is the canonical spelling and it is the **24 hour clock** (as is `HH`).
   At 22:48 you get `…_2248`, never `…_1048`.
 - `mm` is **minutes**, `MM` is the **month**. `yyyy` is the 4-digit year.
